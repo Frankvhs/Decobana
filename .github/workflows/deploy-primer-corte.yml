@@ -21,10 +21,10 @@ jobs:
       - name: Setup mermaid-cli
         uses: AnimMouse/setup-mermaid-cli@v1
 
-      - name: Generar PNG desde diagrama Mermaid
+      - name: Generar SVG desde diagrama Mermaid
         run: |
           mkdir -p output
-          mmdc -i docs/DIAGRAMA.mermaid -o output/diagrama.png -t default -b transparent
+          mmdc -i docs/DIAGRAMA.mermaid -o output/diagrama.svg -t default -b transparent
 
       - name: Copiar migración SQL
         run: cp db/migrations/20260420142936_initial_db.sql output/generacion.sql
