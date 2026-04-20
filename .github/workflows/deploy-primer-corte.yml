@@ -24,7 +24,7 @@ jobs:
       - name: Generar PNG desde diagrama Mermaid
         run: |
           mkdir -p output
-          mmdc -i docs/DIAGRAMA.mermaid -o output/diagrama.png -t default -b transparent
+          mmdc -i docs/DIAGRAMA.mermaid -o output/diagrama.png -t default --scale 3
 
       - name: Copiar migración SQL
         run: cp db/migrations/20260420142936_initial_db.sql output/generacion.sql
