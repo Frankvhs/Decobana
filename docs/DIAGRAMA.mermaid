@@ -1,6 +1,5 @@
-```mermaid
 erDiagram
-    EMPRESA {
+    EMPRESA{
         int id PK "Solo una fila (id=1)"
         text nombre
         text codigo
@@ -13,7 +12,7 @@ erDiagram
         blob logotipo
     }
 
-    PROVEEDORES {
+    PROVEEDORES{
         int id PK
         text nombre
         text tipo_servicio
@@ -23,7 +22,7 @@ erDiagram
         text nombre_responsable
     }
 
-    CLIENTES {
+    CLIENTES{
         int id PK
         text nombre
         text apellidos
@@ -35,7 +34,7 @@ erDiagram
         boolean trato_preferencial
     }
 
-    EVENTOS {
+    EVENTOS{
         int id PK
         text nombre_evento
         text tipo_evento
@@ -46,7 +45,7 @@ erDiagram
         text temas_decoracion
     }
 
-    SERVICIOS_PRODUCTOS {
+    SERVICIOS_PRODUCTOS{
         int id PK
         text codigo UK
         text nombre
@@ -57,7 +56,7 @@ erDiagram
         int proveedor_id FK
     }
 
-    EMPLEADOS {
+    EMPLEADOS{
         int id PK
         text nombre
         text apellidos
@@ -70,7 +69,7 @@ erDiagram
         text responsabilidades_evento
     }
 
-    CONTRATOS {
+    CONTRATOS{
         int id PK
         text numero_contrato UK
         int cliente_id FK
@@ -81,7 +80,7 @@ erDiagram
         text terminos_condiciones
     }
 
-    CONTRATO_SERVICIOS {
+    CONTRATO_SERVICIOS{
         int id PK
         int contrato_id FK
         int servicio_producto_id FK
@@ -89,21 +88,21 @@ erDiagram
         real precio_negociado
     }
 
-    EMPLEADO_EVENTO {
+    EMPLEADO_EVENTO{
         int id PK
         int empleado_id FK
         int evento_id FK
         text responsabilidad_especifica
     }
 
-    HISTORIAL_CONTRATO {
+    HISTORIAL_CONTRATO{
         int id PK
         int contrato_id FK
         datetime fecha_modificacion
         text descripcion_modificacion
     }
 
-    PAGOS_PLAN {
+    PAGOS_PLAN{
         int id PK
         int contrato_id FK
         date fecha_programada
@@ -120,4 +119,3 @@ erDiagram
     EVENTOS ||--o{ EMPLEADO_EVENTO : "participa"
     CONTRATOS ||--o{ HISTORIAL_CONTRATO : "modificaciones"
     CONTRATOS ||--o{ PAGOS_PLAN : "plan de pagos"
-```
