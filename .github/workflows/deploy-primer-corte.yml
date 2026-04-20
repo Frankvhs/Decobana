@@ -1,0 +1,50 @@
+name: Primer corte evaluativo
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Número de versión (ej. 1.0.0)'
+        required: true
+        type: string
+
+jobs:
+  build-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Instalar mermaid-cli
+        run: npm install -g @mermaid-js/mermaid-cli
+
+      - name: Generar PNG desde diagrama Mermaid
+        run: |
+          mkdir -p output
+          mmdc -i docs/DIAGRAMA.mermaid -o output/diagrama.png -t default -b transparent
+
+      - name: Copiar migración SQL
+        run: cp db/migrations/20260420142936_initial_db.sql output/generacion.sql
+
+      - name: Crear ZIP con versión
+        run: |
+          cd output
+          zip -r ../primer-corte-${{ inputs.version }}.zip .
+
+      - name: Crear Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: primer-corte-v${{ inputs.version }}
+          name: Primer Corte Evaluativo v${{ inputs.version }}
+          files: primer-corte-${{ inputs.version }}.zip
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
