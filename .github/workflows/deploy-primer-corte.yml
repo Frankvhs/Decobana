@@ -18,12 +18,8 @@ jobs:
       - name: Checkout código
         uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Instalar mermaid-cli
-        run: npm install -g @mermaid-js/mermaid-cli
+      - name: Setup mermaid-cli
+        uses: AnimMouse/setup-mermaid-cli@v1
 
       - name: Generar PNG desde diagrama Mermaid
         run: |
