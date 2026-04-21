@@ -18,13 +18,18 @@ jobs:
       - name: Checkout código
         uses: actions/checkout@v4
 
-      - name: Setup mermaid-cli
-        uses: AnimMouse/setup-mermaid-cli@v1
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
 
-      - name: Generar PNG desde diagrama Mermaid
+      - name: Instalar draw.io-export
+        run: npm install -g draw.io-export
+
+      - name: Generar PNG desde archivo Draw.io
         run: |
           mkdir -p output
-          mmdc -i docs/DIAGRAMA.mermaid -o output/diagrama.png -t default --scale 3
+          drawio-export -i docs/DIAGRAMA.drawio -o output/diagrama.png -f png --scale 3
 
       - name: Copiar migración SQL
         run: cp db/migrations/20260420142936_initial_db.sql output/generacion.sql
