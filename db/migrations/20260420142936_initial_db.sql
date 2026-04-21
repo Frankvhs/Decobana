@@ -1,153 +1,152 @@
-PRAGMA foreign_keys = ON;
 
--- EMPRESA
-CREATE TABLE empresa (
-    id INTEGER PRIMARY KEY CHECK (id = 1),
-    nombre TEXT NOT NULL,
-    codigo TEXT,
-    direccion_postal TEXT,
-    telefono TEXT,
-    director_general TEXT,
-    jefe_rrhh TEXT,
-    responsable_contabilidad TEXT,
-    secretario_sindicato TEXT,
-    logotipo BLOB
+-- empresas (única fila)
+CREATE TABLE empresas (
+    cod_emp         SERIAL PRIMARY KEY,
+    nombre          VARCHAR(100) NOT NULL,
+    direccion       VARCHAR(200),
+    telefono        VARCHAR(20),
+    email           VARCHAR(100),
+    logotipo        TEXT, -- pensado para que sea una ruta
+    director_general VARCHAR(100),
+    jefe_rrhh       VARCHAR(100),
+    jefe_contabilidad VARCHAR(100),
+    secretario_sindicato VARCHAR(100)
 );
 
--- PROVEEDORES
+-- 
 CREATE TABLE proveedores (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    nombre TEXT NOT NULL,
-    tipo_servicio TEXT NOT NULL CHECK (tipo_servicio IN ('floristeria','mobiliario','catering','entretenimiento')),
-    direccion TEXT,
-    telefono TEXT,
-    email_contacto TEXT,
-    nombre_responsable TEXT
+    id_proveedor    SERIAL PRIMARY KEY,
+    nombre          VARCHAR(100) NOT NULL,
+    tipo_servicio   VARCHAR(50) NOT NULL,
+    direccion       VARCHAR(200),
+    telefono        VARCHAR(20),
+    email           VARCHAR(100) UNIQUE,
+    responsable     VARCHAR(100)
 );
-CREATE INDEX idx_proveedores_tipo_servicio ON proveedores(tipo_servicio);
 
--- CLIENTES
+-- 
 CREATE TABLE clientes (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    nombre TEXT NOT NULL,
-    apellidos TEXT NOT NULL,
-    numero_documento TEXT UNIQUE NOT NULL,
-    direccion TEXT,
-    telefono TEXT,
-    email TEXT,
-    detalles_eventos_anteriores TEXT,
-    trato_preferencial BOOLEAN DEFAULT 0 CHECK (trato_preferencial IN (0,1))
+    id_cliente      SERIAL PRIMARY KEY,
+    nombre          VARCHAR(50) NOT NULL,
+    apellidos       VARCHAR(100) NOT NULL,
+    num_documento   VARCHAR(20) UNIQUE NOT NULL,
+    direccion       VARCHAR(200),
+    telefono        VARCHAR(20),
+    email           VARCHAR(100),
+    trato_pref      BOOLEAN DEFAULT FALSE
 );
-CREATE INDEX idx_clientes_numero_documento ON clientes(numero_documento);
-CREATE INDEX idx_clientes_nombre_apellidos ON clientes(nombre, apellidos);
 
--- EVENTOS
-CREATE TABLE eventos (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    nombre_evento TEXT NOT NULL,
-    tipo_evento TEXT NOT NULL CHECK (tipo_evento IN ('boda','cumpleaños','corporativo','otro')),
-    fecha_hora_inicio DATETIME NOT NULL,
-    fecha_hora_fin DATETIME NOT NULL,
-    ubicacion TEXT,
-    numero_invitados INTEGER,
-    temas_decoracion TEXT
-);
-CREATE INDEX idx_eventos_fecha_inicio ON eventos(fecha_hora_inicio);
-
--- SERVICIOS_PRODUCTOS
-CREATE TABLE servicios_productos (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    codigo TEXT UNIQUE NOT NULL,
-    nombre TEXT NOT NULL,
-    descripcion TEXT,
-    categoria TEXT NOT NULL CHECK (categoria IN ('floral','mobiliario','iluminacion','entretenimiento','catering','otro')),
-    precio_unitario REAL NOT NULL CHECK (precio_unitario >= 0),
-    es_terceros BOOLEAN DEFAULT 0 CHECK (es_terceros IN (0,1)),
-    proveedor_id INTEGER,
-    FOREIGN KEY (proveedor_id) REFERENCES proveedores(id) ON DELETE SET NULL
-);
-CREATE INDEX idx_servicios_codigo ON servicios_productos(codigo);
-CREATE INDEX idx_servicios_proveedor ON servicios_productos(proveedor_id);
-CREATE INDEX idx_servicios_categoria ON servicios_productos(categoria);
-
--- EMPLEADOS
+-- 
 CREATE TABLE empleados (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    nombre TEXT NOT NULL,
-    apellidos TEXT NOT NULL,
-    numero_documento TEXT UNIQUE NOT NULL,
-    direccion TEXT,
-    telefono TEXT,
-    email TEXT,
-    cargo TEXT,
-    departamento TEXT,
-    responsabilidades_evento TEXT
+    id_empleado     SERIAL PRIMARY KEY,
+    nombre          VARCHAR(50) NOT NULL,
+    apellidos       VARCHAR(100) NOT NULL,
+    cargo           VARCHAR(100),
+    departamento    VARCHAR(100)
 );
-CREATE INDEX idx_empleados_numero_documento ON empleados(numero_documento);
 
--- CONTRATOS
+-- 
+CREATE TABLE servicios_productos (
+    cod_servicio    VARCHAR(20) PRIMARY KEY,
+    nombre          VARCHAR(100) NOT NULL,
+    descripcion     TEXT,
+    categoria       VARCHAR(50) NOT NULL,
+    precio_unitario DECIMAL(10,2) NOT NULL,
+    es_tercero      BOOLEAN DEFAULT FALSE,
+    id_proveedor    INTEGER NULL,
+    FOREIGN KEY (id_proveedor) REFERENCES proveedores(id_proveedor) ON DELETE SET NULL
+);
+
+-- 
+CREATE TABLE eventos (
+    id_evento       SERIAL PRIMARY KEY,
+    nombre_evento   VARCHAR(100) NOT NULL,
+    tipo_evento     VARCHAR(50) NOT NULL,
+    fecha_hora_ini  TIMESTAMP NOT NULL,
+    fecha_hora_fin  TIMESTAMP NOT NULL,
+    ubicacion       VARCHAR(200),
+    num_invitados   INTEGER,
+    id_cliente      INTEGER NOT NULL,
+    FOREIGN KEY (id_cliente) REFERENCES clientes(id_cliente) ON DELETE RESTRICT
+);
+
+-- (relación 1:1 con evento, pero separada)
 CREATE TABLE contratos (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    numero_contrato TEXT UNIQUE NOT NULL,
-    cliente_id INTEGER NOT NULL,
-    evento_id INTEGER NOT NULL,
-    fecha_contrato DATE NOT NULL,
-    precio_total_negociado REAL CHECK (precio_total_negociado >= 0),
-    cronograma_pagos TEXT,
-    terminos_condiciones TEXT,
-    FOREIGN KEY (cliente_id) REFERENCES clientes(id) ON DELETE RESTRICT,
-    FOREIGN KEY (evento_id) REFERENCES eventos(id) ON DELETE RESTRICT
+    num_contrato    VARCHAR(20) PRIMARY KEY,
+    fecha_contrato  DATE NOT NULL,
+    terminos_cond   TEXT,
+    id_cliente      INTEGER NOT NULL,
+    id_evento       INTEGER UNIQUE NOT NULL,
+    FOREIGN KEY (id_cliente) REFERENCES clientes(id_cliente) ON DELETE RESTRICT,
+    FOREIGN KEY (id_evento) REFERENCES eventos(id_evento) ON DELETE CASCADE
 );
-CREATE INDEX idx_contratos_cliente ON contratos(cliente_id);
-CREATE INDEX idx_contratos_evento ON contratos(evento_id);
-CREATE INDEX idx_contratos_fecha ON contratos(fecha_contrato);
-CREATE INDEX idx_contratos_numero ON contratos(numero_contrato);
 
--- CONTRATO_SERVICIOS (detalle de servicios/productos por contrato)
-CREATE TABLE contrato_servicios (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    contrato_id INTEGER NOT NULL,
-    servicio_producto_id INTEGER NOT NULL,
-    cantidad INTEGER NOT NULL DEFAULT 1 CHECK (cantidad > 0),
-    precio_negociado REAL NOT NULL CHECK (precio_negociado >= 0),
-    FOREIGN KEY (contrato_id) REFERENCES contratos(id) ON DELETE CASCADE,
-    FOREIGN KEY (servicio_producto_id) REFERENCES servicios_productos(id) ON DELETE RESTRICT,
-    UNIQUE(contrato_id, servicio_producto_id)
+-- (relación M:N entre evento y servicio_producto)
+CREATE TABLE eventos_servicios (
+    id_evento       INTEGER NOT NULL,
+    cod_servicio    VARCHAR(20) NOT NULL,
+    cantidad        INTEGER NOT NULL CHECK (cantidad > 0),
+    PRIMARY KEY (id_evento, cod_servicio),
+    FOREIGN KEY (id_evento) REFERENCES eventos(id_evento) ON DELETE CASCADE,
+    FOREIGN KEY (cod_servicio) REFERENCES servicios_productos(cod_servicio) ON DELETE RESTRICT
 );
-CREATE INDEX idx_contrato_servicios_contrato ON contrato_servicios(contrato_id);
 
--- EMPLEADO_EVENTO (asignacion de empleados a eventos)
-CREATE TABLE empleado_evento (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    empleado_id INTEGER NOT NULL,
-    evento_id INTEGER NOT NULL,
-    responsabilidad_especifica TEXT,
-    FOREIGN KEY (empleado_id) REFERENCES empleados(id) ON DELETE CASCADE,
-    FOREIGN KEY (evento_id) REFERENCES eventos(id) ON DELETE CASCADE,
-    UNIQUE(empleado_id, evento_id)
+-- (relación M:N con responsabilidades)
+CREATE TABLE eventos_empleados (
+    id_evento       INTEGER NOT NULL,
+    id_empleado     INTEGER NOT NULL,
+    responsabilidades TEXT,
+    PRIMARY KEY (id_evento, id_empleado),
+    FOREIGN KEY (id_evento) REFERENCES eventos(id_evento) ON DELETE CASCADE,
+    FOREIGN KEY (id_empleado) REFERENCES empleados(id_empleado) ON DELETE RESTRICT
 );
-CREATE INDEX idx_empleado_evento_evento ON empleado_evento(evento_id);
-CREATE INDEX idx_empleado_evento_empleado ON empleado_evento(empleado_id);
 
--- HISTORIAL_CONTRATO (modificaciones de contratos)
-CREATE TABLE historial_contrato (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    contrato_id INTEGER NOT NULL,
-    fecha_modificacion DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    descripcion_modificacion TEXT NOT NULL,
-    FOREIGN KEY (contrato_id) REFERENCES contratos(id) ON DELETE CASCADE
+-- (servicios/productos contratados en un contrato)
+CREATE TABLE contratos_lineas (
+    num_contrato    VARCHAR(20) NOT NULL,
+    cod_servicio    VARCHAR(20) NOT NULL,
+    cantidad        INTEGER NOT NULL CHECK (cantidad > 0),
+    precio_negociado DECIMAL(10,2) NOT NULL,
+    PRIMARY KEY (num_contrato, cod_servicio),
+    FOREIGN KEY (num_contrato) REFERENCES contratos(num_contrato) ON DELETE CASCADE,
+    FOREIGN KEY (cod_servicio) REFERENCES servicios_productos(cod_servicio) ON DELETE RESTRICT
 );
-CREATE INDEX idx_historial_contrato_fecha ON historial_contrato(fecha_modificacion);
-CREATE INDEX idx_historial_contrato_contrato ON historial_contrato(contrato_id);
 
--- PAGOS_PLAN
-CREATE TABLE pagos_plan (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    contrato_id INTEGER NOT NULL,
-    fecha_programada DATE NOT NULL,
-    monto REAL NOT NULL CHECK (monto >= 0),
-    estado TEXT NOT NULL DEFAULT 'pendiente' CHECK (estado IN ('pendiente','pagado','vencido')),
-    FOREIGN KEY (contrato_id) REFERENCES contratos(id) ON DELETE CASCADE
+-- (cronograma de pagos de un contrato)
+CREATE TABLE pagos (
+    id_pago         SERIAL PRIMARY KEY,
+    num_contrato    VARCHAR(20) NOT NULL,
+    fecha_pago      DATE NOT NULL,
+    monto           DECIMAL(10,2) NOT NULL CHECK (monto > 0),
+    FOREIGN KEY (num_contrato) REFERENCES contratos(num_contrato) ON DELETE CASCADE
 );
-CREATE INDEX idx_pagos_plan_contrato ON pagos_plan(contrato_id);
-CREATE INDEX idx_pagos_plan_fecha ON pagos_plan(fecha_programada);
+
+-- (historial de cambios en contratos)
+CREATE TABLE modificaciones_contratos (
+    id_mod          SERIAL PRIMARY KEY,
+    num_contrato    VARCHAR(20) NOT NULL,
+    fecha_mod       DATE NOT NULL,
+    descripcion     TEXT NOT NULL,
+    FOREIGN KEY (num_contrato) REFERENCES contratos(num_contrato) ON DELETE CASCADE
+);
+
+-- (múltiples temas o conceptos por evento)
+CREATE TABLE eventos_temas (
+    id_evento       INTEGER NOT NULL,
+    tema            VARCHAR(100) NOT NULL,
+    PRIMARY KEY (id_evento, tema),
+    FOREIGN KEY (id_evento) REFERENCES eventos(id_evento) ON DELETE CASCADE
+);
+
+-- indices importantes
+
+CREATE INDEX idx_eventos_id_cliente ON eventos(id_cliente);
+CREATE INDEX idx_contratos_id_cliente ON contratos(id_cliente);
+CREATE INDEX idx_contratos_id_evento ON contratos(id_evento);
+CREATE INDEX idx_eventos_servicios_cod_servicio ON eventos_servicios(cod_servicio);
+CREATE INDEX idx_eventos_empleados_id_empleado ON eventos_empleados(id_empleado);
+CREATE INDEX idx_contratos_lineas_cod_servicio ON contratos_lineas(cod_servicio);
+CREATE INDEX idx_pagos_num_contrato ON pagos(num_contrato);
+CREATE INDEX idx_modificaciones_num_contrato ON modificaciones_contratos(num_contrato);
+CREATE INDEX idx_eventos_temas_id_evento ON eventos_temas(id_evento);
+CREATE INDEX idx_servicios_productos_id_proveedor ON servicios_productos(id_proveedor);
