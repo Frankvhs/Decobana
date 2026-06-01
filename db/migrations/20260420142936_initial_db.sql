@@ -6,7 +6,6 @@ CREATE TABLE empresas (
     direccion       VARCHAR(200),
     telefono        VARCHAR(20),
     email           VARCHAR(100),
-    logotipo        TEXT, -- pensado para que sea una ruta
     director_general VARCHAR(100),
     jefe_rrhh       VARCHAR(100),
     jefe_contabilidad VARCHAR(100),
@@ -41,19 +40,31 @@ CREATE TABLE empleados (
     id_empleado     SERIAL PRIMARY KEY,
     nombre          VARCHAR(50) NOT NULL,
     apellidos       VARCHAR(100) NOT NULL,
+    num_documento   VARCHAR(20) UNIQUE NOT NULL,
+    direccion       VARCHAR(200),
+    telefono        VARCHAR(20),
+    email           VARCHAR(100) UNIQUE,
     cargo           VARCHAR(100),
     departamento    VARCHAR(100)
 );
 
--- 
+--
+CREATE TABLE categorias_servicios_productos (
+    id_categoria    SERIAL PRIMARY KEY,
+    nombre          VARCHAR(50) NOT NULL UNIQUE
+);
+
+--
 CREATE TABLE servicios_productos (
     cod_servicio    VARCHAR(20) PRIMARY KEY,
     nombre          VARCHAR(100) NOT NULL,
     descripcion     TEXT,
-    categoria       VARCHAR(50) NOT NULL,
+    id_categoria    INTEGER NOT NULL,
     precio_unitario DECIMAL(10,2) NOT NULL,
     es_tercero      BOOLEAN DEFAULT FALSE,
+    estado_activo   BOOLEAN NOT NULL DEFAULT TRUE,
     id_proveedor    INTEGER NULL,
+    FOREIGN KEY (id_categoria) REFERENCES categorias_servicios_productos(id_categoria) ON DELETE RESTRICT,
     FOREIGN KEY (id_proveedor) REFERENCES proveedores(id_proveedor) ON DELETE SET NULL
 );
 
@@ -150,3 +161,4 @@ CREATE INDEX idx_pagos_num_contrato ON pagos(num_contrato);
 CREATE INDEX idx_modificaciones_num_contrato ON modificaciones_contratos(num_contrato);
 CREATE INDEX idx_eventos_temas_id_evento ON eventos_temas(id_evento);
 CREATE INDEX idx_servicios_productos_id_proveedor ON servicios_productos(id_proveedor);
+CREATE INDEX idx_servicios_productos_id_categoria ON servicios_productos(id_categoria);
