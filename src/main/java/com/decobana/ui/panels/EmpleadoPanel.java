@@ -39,7 +39,7 @@ public class EmpleadoPanel extends JPanel {
         cargarTabla();
     }
 
-    private void cargarTabla() {
+    public void cargarTabla() {
         tableModel.setRowCount(0);
         try {
             List<Empleado> lista = dao.findAll();

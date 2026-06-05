@@ -65,7 +65,7 @@ public class ContratoPanel extends JPanel {
         cargarContratos();
     }
 
-    private void cargarContratos() {
+    public void cargarContratos() {
         contratosModel.setRowCount(0);
         try {
             List<Contrato> contratos = dao.findAll();
