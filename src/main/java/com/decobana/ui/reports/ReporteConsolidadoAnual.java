@@ -41,8 +41,7 @@ public class ReporteConsolidadoAnual extends JDialog {
                     "JOIN servicios_productos sp ON cl.cod_servicio = sp.cod_servicio " +
                     "JOIN categorias_servicios_productos cat ON sp.id_categoria = cat.id_categoria " +
                     "WHERE strftime('%Y', c.fecha_contrato) = ? " +
-                    "GROUP BY cat.id_categoria " +
-                    "ORDER BY categoria";
+                    "GROUP BY cat.id_categoria ORDER BY categoria";
             try (Connection conn = DatabaseConnection.getConnection();
                  PreparedStatement ps = conn.prepareStatement(sql)) {
                 ps.setString(1, String.format("%04d", anio));

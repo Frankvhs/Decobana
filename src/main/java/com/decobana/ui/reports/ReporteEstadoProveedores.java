@@ -16,8 +16,7 @@ public class ReporteEstadoProveedores extends JDialog {
         String sql = "SELECT p.nombre, p.tipo_servicio, " +
                 "GROUP_CONCAT(sp.nombre || ' (' || CASE WHEN sp.estado_activo THEN 'Activo' ELSE 'Inactivo' END || ')', ', ') AS estado " +
                 "FROM proveedores p LEFT JOIN servicios_productos sp ON p.id_proveedor = sp.id_proveedor " +
-                "GROUP BY p.id_proveedor " +
-                "ORDER BY p.tipo_servicio, p.nombre";
+                "GROUP BY p.id_proveedor ORDER BY p.tipo_servicio, p.nombre";
         try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
