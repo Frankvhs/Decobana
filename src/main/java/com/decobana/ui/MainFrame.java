@@ -8,7 +8,6 @@ import java.awt.*;
 
 public class MainFrame extends JFrame {
     private JTabbedPane tabbedPane;
-    private EmpresaPanel empresaPanel;
     private ClientePanel clientePanel;
     private ProveedorPanel proveedorPanel;
     private EmpleadoPanel empleadoPanel;
@@ -28,7 +27,6 @@ public class MainFrame extends JFrame {
     private void initComponents() {
         tabbedPane = new JTabbedPane();
 
-        empresaPanel = new EmpresaPanel();
         clientePanel = new ClientePanel();
         proveedorPanel = new ProveedorPanel();
         empleadoPanel = new EmpleadoPanel();
@@ -36,7 +34,6 @@ public class MainFrame extends JFrame {
         eventoPanel = new EventoPanel();
         contratoPanel = new ContratoPanel();
 
-        tabbedPane.addTab("Empresa", empresaPanel);
         tabbedPane.addTab("Clientes", clientePanel);
         tabbedPane.addTab("Proveedores", proveedorPanel);
         tabbedPane.addTab("Empleados", empleadoPanel);
