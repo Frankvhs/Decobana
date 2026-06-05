@@ -3,27 +3,26 @@ package com.decobana.ui.dialogs;
 import com.decobana.model.Empleado;
 
 import javax.swing.*;
-import java.awt.*;
 
-public class EmpleadoDialog extends JDialog {
+public class EmpleadoDialog extends BaseEntityDialog<Empleado> {
     private JTextField tfNombre, tfApellidos, tfDocumento, tfDireccion, tfTelefono, tfEmail, tfCargo, tfDepartamento;
-    private boolean confirmed = false;
-    private Empleado empleado;
 
     public EmpleadoDialog(JFrame parent, Empleado e) {
-        super(parent, e == null ? "Agregar Empleado" : "Editar Empleado", true);
-        this.empleado = (e != null) ? e : new Empleado();
-        initComponents();
-        pack();
-        setLocationRelativeTo(parent);
+        super(parent, e == null ? "Agregar Empleado" : "Editar Empleado", e);
     }
 
-    private void initComponents() {
-        setLayout(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5,5,5,5);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+    @Override
+    protected Empleado createNewEntity() {
+        return new Empleado();
+    }
 
+    @Override
+    protected boolean entityExists() {
+        return entity != null && entity.getIdEmpleado() != 0;
+    }
+
+    @Override
+    protected void addSpecificFields() {
         tfNombre = new JTextField(15);
         tfApellidos = new JTextField(15);
         tfDocumento = new JTextField(15);
@@ -33,57 +32,37 @@ public class EmpleadoDialog extends JDialog {
         tfCargo = new JTextField(15);
         tfDepartamento = new JTextField(15);
 
-        if (empleado.getIdEmpleado() != 0) {
-            tfNombre.setText(empleado.getNombre());
-            tfApellidos.setText(empleado.getApellidos());
-            tfDocumento.setText(empleado.getNumDocumento());
-            tfDireccion.setText(empleado.getDireccion());
-            tfTelefono.setText(empleado.getTelefono());
-            tfEmail.setText(empleado.getEmail());
-            tfCargo.setText(empleado.getCargo());
-            tfDepartamento.setText(empleado.getDepartamento());
-        }
-
-        int y = 0;
-        addField("Nombre:", tfNombre, y++, gbc);
-        addField("Apellidos:", tfApellidos, y++, gbc);
-        addField("Documento:", tfDocumento, y++, gbc);
-        addField("Dirección:", tfDireccion, y++, gbc);
-        addField("Teléfono:", tfTelefono, y++, gbc);
-        addField("Email:", tfEmail, y++, gbc);
-        addField("Cargo:", tfCargo, y++, gbc);
-        addField("Departamento:", tfDepartamento, y++, gbc);
-
-        JButton btnOk = new JButton("Aceptar");
-        JButton btnCancel = new JButton("Cancelar");
-        JPanel btnPanel = new JPanel();
-        btnPanel.add(btnOk);
-        btnPanel.add(btnCancel);
-        gbc.gridx = 0; gbc.gridy = y; gbc.gridwidth = 2;
-        add(btnPanel, gbc);
-
-        btnOk.addActionListener(e -> {
-            empleado.setNombre(tfNombre.getText());
-            empleado.setApellidos(tfApellidos.getText());
-            empleado.setNumDocumento(tfDocumento.getText());
-            empleado.setDireccion(tfDireccion.getText());
-            empleado.setTelefono(tfTelefono.getText());
-            empleado.setEmail(tfEmail.getText());
-            empleado.setCargo(tfCargo.getText());
-            empleado.setDepartamento(tfDepartamento.getText());
-            confirmed = true;
-            dispose();
-        });
-        btnCancel.addActionListener(e -> dispose());
+        addField("Nombre:", tfNombre);
+        addField("Apellidos:", tfApellidos);
+        addField("Documento:", tfDocumento);
+        addField("Dirección:", tfDireccion);
+        addField("Teléfono:", tfTelefono);
+        addField("Email:", tfEmail);
+        addField("Cargo:", tfCargo);
+        addField("Departamento:", tfDepartamento);
     }
 
-    private void addField(String label, JTextField field, int y, GridBagConstraints gbc) {
-        gbc.gridx = 0; gbc.gridy = y;
-        add(new JLabel(label), gbc);
-        gbc.gridx = 1;
-        add(field, gbc);
+    @Override
+    protected void loadEntityData() {
+        tfNombre.setText(entity.getNombre());
+        tfApellidos.setText(entity.getApellidos());
+        tfDocumento.setText(entity.getNumDocumento());
+        tfDireccion.setText(entity.getDireccion());
+        tfTelefono.setText(entity.getTelefono());
+        tfEmail.setText(entity.getEmail());
+        tfCargo.setText(entity.getCargo());
+        tfDepartamento.setText(entity.getDepartamento());
     }
 
-    public boolean isConfirmed() { return confirmed; }
-    public Empleado getEmpleado() { return empleado; }
+    @Override
+    protected void saveToEntity() {
+        entity.setNombre(tfNombre.getText());
+        entity.setApellidos(tfApellidos.getText());
+        entity.setNumDocumento(tfDocumento.getText());
+        entity.setDireccion(tfDireccion.getText());
+        entity.setTelefono(tfTelefono.getText());
+        entity.setEmail(tfEmail.getText());
+        entity.setCargo(tfCargo.getText());
+        entity.setDepartamento(tfDepartamento.getText());
+    }
 }

@@ -3,27 +3,26 @@ package com.decobana.ui.dialogs;
 import com.decobana.model.Proveedor;
 
 import javax.swing.*;
-import java.awt.*;
 
-public class ProveedorDialog extends JDialog {
+public class ProveedorDialog extends BaseEntityDialog<Proveedor> {
     private JTextField tfNombre, tfTipoServicio, tfDireccion, tfTelefono, tfEmail, tfResponsable;
-    private boolean confirmed = false;
-    private Proveedor proveedor;
 
     public ProveedorDialog(JFrame parent, Proveedor p) {
-        super(parent, p == null ? "Agregar Proveedor" : "Editar Proveedor", true);
-        this.proveedor = (p != null) ? p : new Proveedor();
-        initComponents();
-        pack();
-        setLocationRelativeTo(parent);
+        super(parent, p == null ? "Agregar Proveedor" : "Editar Proveedor", p);
     }
 
-    private void initComponents() {
-        setLayout(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5,5,5,5);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+    @Override
+    protected Proveedor createNewEntity() {
+        return new Proveedor();
+    }
 
+    @Override
+    protected boolean entityExists() {
+        return entity != null && entity.getIdProveedor() != 0;
+    }
+
+    @Override
+    protected void addSpecificFields() {
         tfNombre = new JTextField(15);
         tfTipoServicio = new JTextField(15);
         tfDireccion = new JTextField(15);
@@ -31,51 +30,31 @@ public class ProveedorDialog extends JDialog {
         tfEmail = new JTextField(15);
         tfResponsable = new JTextField(15);
 
-        if (proveedor.getIdProveedor() != 0) {
-            tfNombre.setText(proveedor.getNombre());
-            tfTipoServicio.setText(proveedor.getTipoServicio());
-            tfDireccion.setText(proveedor.getDireccion());
-            tfTelefono.setText(proveedor.getTelefono());
-            tfEmail.setText(proveedor.getEmail());
-            tfResponsable.setText(proveedor.getResponsable());
-        }
-
-        int y = 0;
-        addField("Nombre:", tfNombre, y++, gbc);
-        addField("Tipo Servicio:", tfTipoServicio, y++, gbc);
-        addField("Dirección:", tfDireccion, y++, gbc);
-        addField("Teléfono:", tfTelefono, y++, gbc);
-        addField("Email:", tfEmail, y++, gbc);
-        addField("Responsable:", tfResponsable, y++, gbc);
-
-        JButton btnOk = new JButton("Aceptar");
-        JButton btnCancel = new JButton("Cancelar");
-        JPanel btnPanel = new JPanel();
-        btnPanel.add(btnOk);
-        btnPanel.add(btnCancel);
-        gbc.gridx = 0; gbc.gridy = y; gbc.gridwidth = 2;
-        add(btnPanel, gbc);
-
-        btnOk.addActionListener(e -> {
-            proveedor.setNombre(tfNombre.getText());
-            proveedor.setTipoServicio(tfTipoServicio.getText());
-            proveedor.setDireccion(tfDireccion.getText());
-            proveedor.setTelefono(tfTelefono.getText());
-            proveedor.setEmail(tfEmail.getText());
-            proveedor.setResponsable(tfResponsable.getText());
-            confirmed = true;
-            dispose();
-        });
-        btnCancel.addActionListener(e -> dispose());
+        addField("Nombre:", tfNombre);
+        addField("Tipo Servicio:", tfTipoServicio);
+        addField("Dirección:", tfDireccion);
+        addField("Teléfono:", tfTelefono);
+        addField("Email:", tfEmail);
+        addField("Responsable:", tfResponsable);
     }
 
-    private void addField(String label, JTextField field, int y, GridBagConstraints gbc) {
-        gbc.gridx = 0; gbc.gridy = y;
-        add(new JLabel(label), gbc);
-        gbc.gridx = 1;
-        add(field, gbc);
+    @Override
+    protected void loadEntityData() {
+        tfNombre.setText(entity.getNombre());
+        tfTipoServicio.setText(entity.getTipoServicio());
+        tfDireccion.setText(entity.getDireccion());
+        tfTelefono.setText(entity.getTelefono());
+        tfEmail.setText(entity.getEmail());
+        tfResponsable.setText(entity.getResponsable());
     }
 
-    public boolean isConfirmed() { return confirmed; }
-    public Proveedor getProveedor() { return proveedor; }
+    @Override
+    protected void saveToEntity() {
+        entity.setNombre(tfNombre.getText());
+        entity.setTipoServicio(tfTipoServicio.getText());
+        entity.setDireccion(tfDireccion.getText());
+        entity.setTelefono(tfTelefono.getText());
+        entity.setEmail(tfEmail.getText());
+        entity.setResponsable(tfResponsable.getText());
+    }
 }

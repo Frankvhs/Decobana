@@ -3,29 +3,27 @@ package com.decobana.ui.dialogs;
 import com.decobana.model.Cliente;
 
 import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
 
-public class ClienteDialog extends JDialog {
+public class ClienteDialog extends BaseEntityDialog<Cliente> {
     private JTextField tfNombre, tfApellidos, tfDocumento, tfDireccion, tfTelefono, tfEmail;
     private JCheckBox chkTratoPref;
-    private boolean confirmed = false;
-    private Cliente cliente;
 
     public ClienteDialog(JFrame parent, Cliente c) {
-        super(parent, c == null ? "Agregar Cliente" : "Editar Cliente", true);
-        this.cliente = (c != null) ? c : new Cliente();
-        initComponents();
-        pack();
-        setLocationRelativeTo(parent);
+        super(parent, c == null ? "Agregar Cliente" : "Editar Cliente", c);
     }
 
-    private void initComponents() {
-        setLayout(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5,5,5,5);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+    @Override
+    protected Cliente createNewEntity() {
+        return new Cliente();
+    }
 
+    @Override
+    protected boolean entityExists() {
+        return entity != null && entity.getIdCliente() != 0;
+    }
+
+    @Override
+    protected void addSpecificFields() {
         tfNombre = new JTextField(15);
         tfApellidos = new JTextField(15);
         tfDocumento = new JTextField(15);
@@ -34,56 +32,34 @@ public class ClienteDialog extends JDialog {
         tfEmail = new JTextField(15);
         chkTratoPref = new JCheckBox("Trato Preferencial");
 
-        if (cliente.getIdCliente() != 0) {
-            tfNombre.setText(cliente.getNombre());
-            tfApellidos.setText(cliente.getApellidos());
-            tfDocumento.setText(cliente.getNumDocumento());
-            tfDireccion.setText(cliente.getDireccion());
-            tfTelefono.setText(cliente.getTelefono());
-            tfEmail.setText(cliente.getEmail());
-            chkTratoPref.setSelected(cliente.isTratoPref());
-        }
-
-        int y = 0;
-        addField("Nombre:", tfNombre, y++, gbc);
-        addField("Apellidos:", tfApellidos, y++, gbc);
-        addField("Documento:", tfDocumento, y++, gbc);
-        addField("Dirección:", tfDireccion, y++, gbc);
-        addField("Teléfono:", tfTelefono, y++, gbc);
-        addField("Email:", tfEmail, y++, gbc);
-        gbc.gridx = 0; gbc.gridy = y; gbc.gridwidth = 2;
-        add(chkTratoPref, gbc); y++;
-        gbc.gridwidth = 1;
-
-        JButton btnOk = new JButton("Aceptar");
-        JButton btnCancel = new JButton("Cancelar");
-        JPanel btnPanel = new JPanel();
-        btnPanel.add(btnOk);
-        btnPanel.add(btnCancel);
-        gbc.gridx = 0; gbc.gridy = y; gbc.gridwidth = 2;
-        add(btnPanel, gbc);
-
-        btnOk.addActionListener(e -> {
-            cliente.setNombre(tfNombre.getText());
-            cliente.setApellidos(tfApellidos.getText());
-            cliente.setNumDocumento(tfDocumento.getText());
-            cliente.setDireccion(tfDireccion.getText());
-            cliente.setTelefono(tfTelefono.getText());
-            cliente.setEmail(tfEmail.getText());
-            cliente.setTratoPref(chkTratoPref.isSelected());
-            confirmed = true;
-            dispose();
-        });
-        btnCancel.addActionListener(e -> dispose());
+        addField("Nombre:", tfNombre);
+        addField("Apellidos:", tfApellidos);
+        addField("Documento:", tfDocumento);
+        addField("Dirección:", tfDireccion);
+        addField("Teléfono:", tfTelefono);
+        addField("Email:", tfEmail);
+        addFullWidthComponent(chkTratoPref);
     }
 
-    private void addField(String label, JTextField field, int y, GridBagConstraints gbc) {
-        gbc.gridx = 0; gbc.gridy = y;
-        add(new JLabel(label), gbc);
-        gbc.gridx = 1;
-        add(field, gbc);
+    @Override
+    protected void loadEntityData() {
+        tfNombre.setText(entity.getNombre());
+        tfApellidos.setText(entity.getApellidos());
+        tfDocumento.setText(entity.getNumDocumento());
+        tfDireccion.setText(entity.getDireccion());
+        tfTelefono.setText(entity.getTelefono());
+        tfEmail.setText(entity.getEmail());
+        chkTratoPref.setSelected(entity.isTratoPref());
     }
 
-    public boolean isConfirmed() { return confirmed; }
-    public Cliente getCliente() { return cliente; }
+    @Override
+    protected void saveToEntity() {
+        entity.setNombre(tfNombre.getText());
+        entity.setApellidos(tfApellidos.getText());
+        entity.setNumDocumento(tfDocumento.getText());
+        entity.setDireccion(tfDireccion.getText());
+        entity.setTelefono(tfTelefono.getText());
+        entity.setEmail(tfEmail.getText());
+        entity.setTratoPref(chkTratoPref.isSelected());
+    }
 }

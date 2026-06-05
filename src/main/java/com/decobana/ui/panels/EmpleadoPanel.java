@@ -3,6 +3,7 @@ package com.decobana.ui.panels;
 import com.decobana.dao.EmpleadoDAO;
 import com.decobana.model.Empleado;
 import com.decobana.ui.dialogs.EmpleadoDialog;
+import com.decobana.ui.utils.UIUtils;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -49,7 +50,7 @@ public class EmpleadoPanel extends JPanel {
                 });
             }
         } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(this, "Error al cargar empleados: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            UIUtils.handleDatabaseException(this, ex, "Error al cargar empleados");
         }
     }
 
@@ -58,10 +59,10 @@ public class EmpleadoPanel extends JPanel {
         dialog.setVisible(true);
         if (dialog.isConfirmed()) {
             try {
-                dao.insert(dialog.getEmpleado());
+                dao.insert(dialog.getEntity());
                 cargarTabla();
             } catch (SQLException ex) {
-                JOptionPane.showMessageDialog(this, "Error al insertar: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                UIUtils.handleDatabaseException(this, ex, "Error al insertar empleado");
             }
         }
     }
@@ -69,7 +70,7 @@ public class EmpleadoPanel extends JPanel {
     private void editar() {
         int row = table.getSelectedRow();
         if (row == -1) {
-            JOptionPane.showMessageDialog(this, "Seleccione un empleado");
+            UIUtils.showWarning(this, "Seleccione un empleado");
             return;
         }
         int id = (int) tableModel.getValueAt(row, 0);
@@ -78,28 +79,27 @@ public class EmpleadoPanel extends JPanel {
             EmpleadoDialog dialog = new EmpleadoDialog((JFrame) SwingUtilities.getWindowAncestor(this), e);
             dialog.setVisible(true);
             if (dialog.isConfirmed()) {
-                dao.update(dialog.getEmpleado());
+                dao.update(dialog.getEntity());
                 cargarTabla();
             }
         } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(this, "Error al editar: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            UIUtils.handleDatabaseException(this, ex, "Error al editar empleado");
         }
     }
 
     private void eliminar() {
         int row = table.getSelectedRow();
         if (row == -1) {
-            JOptionPane.showMessageDialog(this, "Seleccione un empleado");
+            UIUtils.showWarning(this, "Seleccione un empleado");
             return;
         }
         int id = (int) tableModel.getValueAt(row, 0);
-        int confirm = JOptionPane.showConfirmDialog(this, "¿Eliminar empleado?", "Confirmar", JOptionPane.YES_NO_OPTION);
-        if (confirm == JOptionPane.YES_OPTION) {
+        if (UIUtils.showConfirm(this, "¿Eliminar empleado?", "Confirmar")) {
             try {
                 dao.delete(id);
                 cargarTabla();
             } catch (SQLException ex) {
-                JOptionPane.showMessageDialog(this, "Error al eliminar: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                UIUtils.handleDatabaseException(this, ex, "Error al eliminar empleado");
             }
         }
     }

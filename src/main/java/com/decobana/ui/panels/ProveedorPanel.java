@@ -3,6 +3,7 @@ package com.decobana.ui.panels;
 import com.decobana.dao.ProveedorDAO;
 import com.decobana.model.Proveedor;
 import com.decobana.ui.dialogs.ProveedorDialog;
+import com.decobana.ui.utils.UIUtils;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -49,7 +50,7 @@ public class ProveedorPanel extends JPanel {
                 });
             }
         } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(this, "Error al cargar proveedores: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            UIUtils.handleDatabaseException(this, ex, "Error al cargar proveedores");
         }
     }
 
@@ -58,10 +59,10 @@ public class ProveedorPanel extends JPanel {
         dialog.setVisible(true);
         if (dialog.isConfirmed()) {
             try {
-                dao.insert(dialog.getProveedor());
+                dao.insert(dialog.getEntity());
                 cargarTabla();
             } catch (SQLException ex) {
-                JOptionPane.showMessageDialog(this, "Error al insertar: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                UIUtils.handleDatabaseException(this, ex, "Error al insertar proveedor");
             }
         }
     }
@@ -69,7 +70,7 @@ public class ProveedorPanel extends JPanel {
     private void editar() {
         int row = table.getSelectedRow();
         if (row == -1) {
-            JOptionPane.showMessageDialog(this, "Seleccione un proveedor");
+            UIUtils.showWarning(this, "Seleccione un proveedor");
             return;
         }
         int id = (int) tableModel.getValueAt(row, 0);
@@ -78,28 +79,27 @@ public class ProveedorPanel extends JPanel {
             ProveedorDialog dialog = new ProveedorDialog((JFrame) SwingUtilities.getWindowAncestor(this), p);
             dialog.setVisible(true);
             if (dialog.isConfirmed()) {
-                dao.update(dialog.getProveedor());
+                dao.update(dialog.getEntity());
                 cargarTabla();
             }
         } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(this, "Error al editar: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            UIUtils.handleDatabaseException(this, ex, "Error al editar proveedor");
         }
     }
 
     private void eliminar() {
         int row = table.getSelectedRow();
         if (row == -1) {
-            JOptionPane.showMessageDialog(this, "Seleccione un proveedor");
+            UIUtils.showWarning(this, "Seleccione un proveedor");
             return;
         }
         int id = (int) tableModel.getValueAt(row, 0);
-        int confirm = JOptionPane.showConfirmDialog(this, "¿Eliminar proveedor?", "Confirmar", JOptionPane.YES_NO_OPTION);
-        if (confirm == JOptionPane.YES_OPTION) {
+        if (UIUtils.showConfirm(this, "¿Eliminar proveedor?", "Confirmar")) {
             try {
                 dao.delete(id);
                 cargarTabla();
             } catch (SQLException ex) {
-                JOptionPane.showMessageDialog(this, "Error al eliminar: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                UIUtils.handleDatabaseException(this, ex, "Error al eliminar proveedor");
             }
         }
     }

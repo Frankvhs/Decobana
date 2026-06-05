@@ -3,6 +3,7 @@ package com.decobana.ui.panels;
 import com.decobana.dao.ContratoDAO;
 import com.decobana.model.*;
 import com.decobana.ui.dialogs.ContratoDialog;
+import com.decobana.ui.utils.UIUtils;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -15,7 +16,6 @@ public class ContratoPanel extends JPanel {
     private DefaultTableModel contratosModel;
     private ContratoDAO dao = new ContratoDAO();
 
-    // sub-tables
     private JTable tableLineas, tablePagos, tableModificaciones;
     private DefaultTableModel lineasModel, pagosModel, modsModel;
 
@@ -35,17 +35,14 @@ public class ContratoPanel extends JPanel {
         add(scrollContratos, BorderLayout.NORTH);
 
         subTabPane = new JTabbedPane();
-        // Lineas
         lineasModel = new DefaultTableModel(new Object[]{"Cód. Servicio","Cantidad","Precio Negociado"}, 0);
         tableLineas = new JTable(lineasModel);
         subTabPane.addTab("Líneas", new JScrollPane(tableLineas));
 
-        // Pagos
         pagosModel = new DefaultTableModel(new Object[]{"Fecha Pago","Monto"}, 0);
         tablePagos = new JTable(pagosModel);
         subTabPane.addTab("Pagos", new JScrollPane(tablePagos));
 
-        // Modificaciones
         modsModel = new DefaultTableModel(new Object[]{"Fecha","Descripción"}, 0);
         tableModificaciones = new JTable(modsModel);
         subTabPane.addTab("Modificaciones", new JScrollPane(tableModificaciones));
@@ -79,7 +76,7 @@ public class ContratoPanel extends JPanel {
                 });
             }
         } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(this, "Error al cargar contratos: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            UIUtils.handleDatabaseException(this, ex, "Error al cargar contratos");
         }
     }
 
@@ -95,7 +92,7 @@ public class ContratoPanel extends JPanel {
             contratoSeleccionado = dao.findByNum(num);
             cargarDetalles(contratoSeleccionado);
         } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(this, "Error al cargar detalles: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            UIUtils.handleDatabaseException(this, ex, "Error al cargar detalles del contrato");
         }
     }
 
@@ -134,7 +131,7 @@ public class ContratoPanel extends JPanel {
                 dao.insert(dialog.getContrato());
                 cargarContratos();
             } catch (SQLException ex) {
-                JOptionPane.showMessageDialog(this, "Error al insertar: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                UIUtils.handleDatabaseException(this, ex, "Error al insertar contrato");
             }
         }
     }
@@ -142,7 +139,7 @@ public class ContratoPanel extends JPanel {
     private void editar() {
         int row = tableContratos.getSelectedRow();
         if (row == -1) {
-            JOptionPane.showMessageDialog(this, "Seleccione un contrato");
+            UIUtils.showWarning(this, "Seleccione un contrato");
             return;
         }
         String num = (String) contratosModel.getValueAt(row, 0);
@@ -159,26 +156,25 @@ public class ContratoPanel extends JPanel {
                 }
             }
         } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(this, "Error al editar: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            UIUtils.handleDatabaseException(this, ex, "Error al editar contrato");
         }
     }
 
     private void eliminar() {
         int row = tableContratos.getSelectedRow();
         if (row == -1) {
-            JOptionPane.showMessageDialog(this, "Seleccione un contrato");
+            UIUtils.showWarning(this, "Seleccione un contrato");
             return;
         }
         String num = (String) contratosModel.getValueAt(row, 0);
-        int confirm = JOptionPane.showConfirmDialog(this, "¿Eliminar contrato y sus líneas/pagos?", "Confirmar", JOptionPane.YES_NO_OPTION);
-        if (confirm == JOptionPane.YES_OPTION) {
+        if (UIUtils.showConfirm(this, "¿Eliminar contrato y sus líneas/pagos?", "Confirmar")) {
             try {
                 dao.delete(num);
                 cargarContratos();
                 limpiarDetalles();
                 contratoSeleccionado = null;
             } catch (SQLException ex) {
-                JOptionPane.showMessageDialog(this, "Error al eliminar: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                UIUtils.handleDatabaseException(this, ex, "Error al eliminar contrato");
             }
         }
     }

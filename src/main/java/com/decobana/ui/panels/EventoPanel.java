@@ -3,6 +3,7 @@ package com.decobana.ui.panels;
 import com.decobana.dao.EventoDAO;
 import com.decobana.model.*;
 import com.decobana.ui.dialogs.EventoDialog;
+import com.decobana.ui.utils.UIUtils;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -79,7 +80,7 @@ public class EventoPanel extends JPanel {
                 });
             }
         } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(this, "Error al cargar eventos: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            UIUtils.handleDatabaseException(this, ex, "Error al cargar eventos");
         }
     }
 
@@ -95,7 +96,7 @@ public class EventoPanel extends JPanel {
             eventoSeleccionado = dao.findById(id);
             cargarDetalles(eventoSeleccionado);
         } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(this, "Error al cargar detalles: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            UIUtils.handleDatabaseException(this, ex, "Error al cargar detalles del evento");
         }
     }
 
@@ -122,14 +123,17 @@ public class EventoPanel extends JPanel {
                 dao.insert(dialog.getEvento());
                 cargarEventos();
             } catch (SQLException ex) {
-                JOptionPane.showMessageDialog(this, "Error al insertar: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                UIUtils.handleDatabaseException(this, ex, "Error al insertar evento");
             }
         }
     }
 
     private void editar() {
         int row = tableEventos.getSelectedRow();
-        if (row == -1) { JOptionPane.showMessageDialog(this, "Seleccione un evento"); return; }
+        if (row == -1) {
+            UIUtils.showWarning(this, "Seleccione un evento");
+            return;
+        }
         int id = (int) eventosModel.getValueAt(row, 0);
         try {
             Evento e = dao.findById(id);
@@ -144,23 +148,25 @@ public class EventoPanel extends JPanel {
                 }
             }
         } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(this, "Error al editar: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            UIUtils.handleDatabaseException(this, ex, "Error al editar evento");
         }
     }
 
     private void eliminar() {
         int row = tableEventos.getSelectedRow();
-        if (row == -1) { JOptionPane.showMessageDialog(this, "Seleccione un evento"); return; }
+        if (row == -1) {
+            UIUtils.showWarning(this, "Seleccione un evento");
+            return;
+        }
         int id = (int) eventosModel.getValueAt(row, 0);
-        int confirm = JOptionPane.showConfirmDialog(this, "¿Eliminar evento y sus detalles?", "Confirmar", JOptionPane.YES_NO_OPTION);
-        if (confirm == JOptionPane.YES_OPTION) {
+        if (UIUtils.showConfirm(this, "¿Eliminar evento y sus detalles?", "Confirmar")) {
             try {
                 dao.delete(id);
                 cargarEventos();
                 limpiarDetalles();
                 eventoSeleccionado = null;
             } catch (SQLException ex) {
-                JOptionPane.showMessageDialog(this, "Error al eliminar: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                UIUtils.handleDatabaseException(this, ex, "Error al eliminar evento");
             }
         }
     }

@@ -3,6 +3,7 @@ package com.decobana.ui.panels;
 import com.decobana.dao.ClienteDAO;
 import com.decobana.model.Cliente;
 import com.decobana.ui.dialogs.ClienteDialog;
+import com.decobana.ui.utils.UIUtils;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -20,8 +21,7 @@ public class ClientePanel extends JPanel {
         setLayout(new BorderLayout());
         tableModel = new DefaultTableModel(new Object[]{"ID","Nombre","Apellidos","Documento","Teléfono","Email","Trato Pref."}, 0);
         table = new JTable(tableModel);
-        JScrollPane scrollPane = new JScrollPane(table);
-        add(scrollPane, BorderLayout.CENTER);
+        add(new JScrollPane(table), BorderLayout.CENTER);
 
         JPanel buttonPanel = new JPanel();
         btnAgregar = new JButton("Agregar");
@@ -51,7 +51,7 @@ public class ClientePanel extends JPanel {
                 });
             }
         } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(this, "Error al cargar clientes: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            UIUtils.handleDatabaseException(this, ex, "Error al cargar clientes");
         }
     }
 
@@ -60,10 +60,10 @@ public class ClientePanel extends JPanel {
         dialog.setVisible(true);
         if (dialog.isConfirmed()) {
             try {
-                dao.insert(dialog.getCliente());
+                dao.insert(dialog.getEntity());
                 cargarTabla();
             } catch (SQLException ex) {
-                JOptionPane.showMessageDialog(this, "Error al insertar: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                UIUtils.handleDatabaseException(this, ex, "Error al insertar cliente");
             }
         }
     }
@@ -71,7 +71,7 @@ public class ClientePanel extends JPanel {
     private void editar() {
         int row = table.getSelectedRow();
         if (row == -1) {
-            JOptionPane.showMessageDialog(this, "Seleccione un cliente");
+            UIUtils.showWarning(this, "Seleccione un cliente");
             return;
         }
         int id = (int) tableModel.getValueAt(row, 0);
@@ -80,28 +80,27 @@ public class ClientePanel extends JPanel {
             ClienteDialog dialog = new ClienteDialog((JFrame) SwingUtilities.getWindowAncestor(this), c);
             dialog.setVisible(true);
             if (dialog.isConfirmed()) {
-                dao.update(dialog.getCliente());
+                dao.update(dialog.getEntity());
                 cargarTabla();
             }
         } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(this, "Error al editar: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            UIUtils.handleDatabaseException(this, ex, "Error al editar cliente");
         }
     }
 
     private void eliminar() {
         int row = table.getSelectedRow();
         if (row == -1) {
-            JOptionPane.showMessageDialog(this, "Seleccione un cliente");
+            UIUtils.showWarning(this, "Seleccione un cliente");
             return;
         }
         int id = (int) tableModel.getValueAt(row, 0);
-        int confirm = JOptionPane.showConfirmDialog(this, "¿Eliminar cliente?", "Confirmar", JOptionPane.YES_NO_OPTION);
-        if (confirm == JOptionPane.YES_OPTION) {
+        if (UIUtils.showConfirm(this, "¿Eliminar cliente?", "Confirmar")) {
             try {
                 dao.delete(id);
                 cargarTabla();
             } catch (SQLException ex) {
-                JOptionPane.showMessageDialog(this, "Error al eliminar: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                UIUtils.handleDatabaseException(this, ex, "Error al eliminar cliente");
             }
         }
     }

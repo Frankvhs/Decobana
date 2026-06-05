@@ -1,12 +1,11 @@
 package com.decobana.ui.panels;
 
 import com.decobana.dao.CategoriaServicioProductoDAO;
-import com.decobana.dao.ProveedorDAO;
 import com.decobana.dao.ServicioProductoDAO;
 import com.decobana.model.CategoriaServicioProducto;
-import com.decobana.model.Proveedor;
 import com.decobana.model.ServicioProducto;
 import com.decobana.ui.dialogs.ServicioProductoDialog;
+import com.decobana.ui.utils.UIUtils;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -19,7 +18,6 @@ public class ServicioProductoPanel extends JPanel {
     private DefaultTableModel tableModel;
     private ServicioProductoDAO dao = new ServicioProductoDAO();
     private CategoriaServicioProductoDAO catDAO = new CategoriaServicioProductoDAO();
-    private ProveedorDAO provDAO = new ProveedorDAO();
     private JButton btnAgregar, btnEditar, btnEliminar;
 
     public ServicioProductoPanel() {
@@ -61,7 +59,7 @@ public class ServicioProductoPanel extends JPanel {
                 });
             }
         } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(this, "Error al cargar servicios: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            UIUtils.handleDatabaseException(this, ex, "Error al cargar servicios");
         }
     }
 
@@ -70,10 +68,10 @@ public class ServicioProductoPanel extends JPanel {
         dialog.setVisible(true);
         if (dialog.isConfirmed()) {
             try {
-                dao.insert(dialog.getServicio());
+                dao.insert(dialog.getEntity());
                 cargarTabla();
             } catch (SQLException ex) {
-                JOptionPane.showMessageDialog(this, "Error al insertar: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                UIUtils.handleDatabaseException(this, ex, "Error al insertar servicio");
             }
         }
     }
@@ -81,7 +79,7 @@ public class ServicioProductoPanel extends JPanel {
     private void editar() {
         int row = table.getSelectedRow();
         if (row == -1) {
-            JOptionPane.showMessageDialog(this, "Seleccione un servicio");
+            UIUtils.showWarning(this, "Seleccione un servicio");
             return;
         }
         String cod = (String) tableModel.getValueAt(row, 0);
@@ -90,28 +88,27 @@ public class ServicioProductoPanel extends JPanel {
             ServicioProductoDialog dialog = new ServicioProductoDialog((JFrame) SwingUtilities.getWindowAncestor(this), s);
             dialog.setVisible(true);
             if (dialog.isConfirmed()) {
-                dao.update(dialog.getServicio());
+                dao.update(dialog.getEntity());
                 cargarTabla();
             }
         } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(this, "Error al editar: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            UIUtils.handleDatabaseException(this, ex, "Error al editar servicio");
         }
     }
 
     private void eliminar() {
         int row = table.getSelectedRow();
         if (row == -1) {
-            JOptionPane.showMessageDialog(this, "Seleccione un servicio");
+            UIUtils.showWarning(this, "Seleccione un servicio");
             return;
         }
         String cod = (String) tableModel.getValueAt(row, 0);
-        int confirm = JOptionPane.showConfirmDialog(this, "¿Eliminar servicio?", "Confirmar", JOptionPane.YES_NO_OPTION);
-        if (confirm == JOptionPane.YES_OPTION) {
+        if (UIUtils.showConfirm(this, "¿Eliminar servicio?", "Confirmar")) {
             try {
                 dao.delete(cod);
                 cargarTabla();
             } catch (SQLException ex) {
-                JOptionPane.showMessageDialog(this, "Error al eliminar: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                UIUtils.handleDatabaseException(this, ex, "Error al eliminar servicio");
             }
         }
     }
