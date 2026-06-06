@@ -1,0 +1,106 @@
+package com.decobana.ui.panels;
+
+import com.decobana.dao.EmpleadoDAO;
+import com.decobana.model.Empleado;
+import com.decobana.ui.dialogs.EmpleadoDialog;
+import com.decobana.ui.utils.UIUtils;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.sql.SQLException;
+import java.util.List;
+
+public class EmpleadoPanel extends JPanel {
+    private JTable table;
+    private DefaultTableModel tableModel;
+    private EmpleadoDAO dao = new EmpleadoDAO();
+    private JButton btnAgregar, btnEditar, btnEliminar;
+
+    public EmpleadoPanel() {
+        setLayout(new BorderLayout());
+        tableModel = new DefaultTableModel(new Object[]{"ID","Nombre","Apellidos","Documento","Cargo","Departamento"}, 0);
+        table = new JTable(tableModel);
+        add(new JScrollPane(table), BorderLayout.CENTER);
+
+        JPanel btnPanel = new JPanel();
+        btnAgregar = new JButton("Agregar");
+        btnEditar = new JButton("Editar");
+        btnEliminar = new JButton("Eliminar");
+        btnPanel.add(btnAgregar);
+        btnPanel.add(btnEditar);
+        btnPanel.add(btnEliminar);
+        add(btnPanel, BorderLayout.SOUTH);
+
+        btnAgregar.addActionListener(e -> agregar());
+        btnEditar.addActionListener(e -> editar());
+        btnEliminar.addActionListener(e -> eliminar());
+
+        cargarTabla();
+    }
+
+    private void cargarTabla() {
+        tableModel.setRowCount(0);
+        try {
+            List<Empleado> lista = dao.findAll();
+            for (Empleado e : lista) {
+                tableModel.addRow(new Object[]{
+                        e.getIdEmpleado(), e.getNombre(), e.getApellidos(),
+                        e.getNumDocumento(), e.getCargo(), e.getDepartamento()
+                });
+            }
+        } catch (SQLException ex) {
+            UIUtils.handleDatabaseException(this, ex, "Error al cargar empleados");
+        }
+    }
+
+    private void agregar() {
+        EmpleadoDialog dialog = new EmpleadoDialog((JFrame) SwingUtilities.getWindowAncestor(this), null);
+        dialog.setVisible(true);
+        if (dialog.isConfirmed()) {
+            try {
+                dao.insert(dialog.getEntity());
+                cargarTabla();
+            } catch (SQLException ex) {
+                UIUtils.handleDatabaseException(this, ex, "Error al insertar empleado");
+            }
+        }
+    }
+
+    private void editar() {
+        int row = table.getSelectedRow();
+        if (row == -1) {
+            UIUtils.showWarning(this, "Seleccione un empleado");
+            return;
+        }
+        int id = (int) tableModel.getValueAt(row, 0);
+        try {
+            Empleado e = dao.findById(id);
+            EmpleadoDialog dialog = new EmpleadoDialog((JFrame) SwingUtilities.getWindowAncestor(this), e);
+            dialog.setVisible(true);
+            if (dialog.isConfirmed()) {
+                dao.update(dialog.getEntity());
+                cargarTabla();
+            }
+        } catch (SQLException ex) {
+            UIUtils.handleDatabaseException(this, ex, "Error al editar empleado");
+        }
+    }
+
+    private void eliminar() {
+        int row = table.getSelectedRow();
+        if (row == -1) {
+            UIUtils.showWarning(this, "Seleccione un empleado");
+            return;
+        }
+        int id = (int) tableModel.getValueAt(row, 0);
+        if (UIUtils.showConfirm(this, "¿Eliminar empleado?", "Confirmar")) {
+            try {
+                dao.delete(id);
+                cargarTabla();
+            } catch (SQLException ex) {
+                UIUtils.handleDatabaseException(this, ex, "Error al eliminar empleado");
+            }
+        }
+    }
+}

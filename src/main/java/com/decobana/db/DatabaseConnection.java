@@ -1,0 +1,31 @@
+package com.decobana.db;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+public class DatabaseConnection {
+    private static final String URL = "jdbc:sqlite:decobana.db";
+    private static Connection connection;
+
+    private DatabaseConnection() {}
+
+    public static Connection getConnection() throws SQLException {
+        if (connection == null || connection.isClosed()) {
+            connection = DriverManager.getConnection(URL);
+            // Enable foreign keys
+            connection.createStatement().execute("PRAGMA foreign_keys = ON");
+        }
+        return connection;
+    }
+
+    public static void closeConnection() {
+        try {
+            if (connection != null && !connection.isClosed()) {
+                connection.close();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}
