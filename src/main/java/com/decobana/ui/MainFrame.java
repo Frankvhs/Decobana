@@ -1,10 +1,12 @@
 package com.decobana.ui;
 
+import com.decobana.db.MockDataLoader;
 import com.decobana.ui.panels.*;
 import com.decobana.ui.reports.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.sql.SQLException;
 
 public class MainFrame extends JFrame {
     private JTabbedPane tabbedPane;
@@ -57,6 +59,12 @@ public class MainFrame extends JFrame {
         addReportMenuItem(reportMenu, "Consolidado anual", e -> new ReporteConsolidadoAnual(this).setVisible(true));
         addReportMenuItem(reportMenu, "Modificaciones contratos", e -> new ReporteModificacionesContratos(this).setVisible(true));
         menuBar.add(reportMenu);
+
+        JButton btnMockData = new JButton("[ ! ] Cargar Datos de Prueba");
+        btnMockData.addActionListener(e -> cargarDatosMock());
+        menuBar.add(Box.createHorizontalGlue());
+        menuBar.add(btnMockData);
+
         setJMenuBar(menuBar);
     }
 
@@ -64,5 +72,38 @@ public class MainFrame extends JFrame {
         JMenuItem item = new JMenuItem(title);
         item.addActionListener(listener);
         menu.add(item);
+    }
+
+    private void cargarDatosMock() {
+        int confirm = JOptionPane.showConfirmDialog(this,
+                "Esta acción insertará datos de prueba en la base de datos.\n" +
+                "Si ya existen algunos registros, se ignorarán duplicados.\n" +
+                "¿Desea continuar?",
+                "Cargar datos mock",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.WARNING_MESSAGE);
+        if (confirm == JOptionPane.YES_OPTION) {
+            try {
+                MockDataLoader.loadMockData();
+                JOptionPane.showMessageDialog(this,
+                        "Datos mock cargados exitosamente.\n" +
+                        "Puede actualizar las pestañas para ver la nueva información.",
+                        "Éxito",
+                        JOptionPane.INFORMATION_MESSAGE);
+                
+                clientePanel.cargarTabla();
+                proveedorPanel.cargarTabla();
+                empleadoPanel.cargarTabla();
+                servicioPanel.cargarTabla();
+                eventoPanel.cargarEventos();
+                contratoPanel.cargarContratos();
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(this,
+                        "Error al cargar datos mock: " + ex.getMessage(),
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
+                ex.printStackTrace();
+            }
+        }
     }
 }

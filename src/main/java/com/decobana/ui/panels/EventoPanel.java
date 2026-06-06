@@ -66,7 +66,7 @@ public class EventoPanel extends JPanel {
         cargarEventos();
     }
 
-    private void cargarEventos() {
+    public void cargarEventos() {
         eventosModel.setRowCount(0);
         try {
             List<Evento> eventos = dao.findAll();
