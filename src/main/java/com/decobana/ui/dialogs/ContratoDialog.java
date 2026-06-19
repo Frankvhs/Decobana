@@ -3,6 +3,7 @@ package com.decobana.ui.dialogs;
 import com.decobana.dao.ClienteDAO;
 import com.decobana.dao.EventoDAO;
 import com.decobana.model.*;
+import com.decobana.ui.utils.UIUtils;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -112,6 +113,7 @@ public class ContratoDialog extends JDialog {
         // Líneas
         lineasModel = new DefaultTableModel(new Object[]{"Código Servicio","Cantidad","Precio"}, 0);
         tableLineas = new JTable(lineasModel);
+        UIUtils.configurarTabla(tableLineas);
         JPanel panelLineas = new JPanel(new BorderLayout());
         panelLineas.add(new JScrollPane(tableLineas), BorderLayout.CENTER);
         JPanel btnLineas = new JPanel();
@@ -151,6 +153,7 @@ public class ContratoDialog extends JDialog {
         // Pagos
         pagosModel = new DefaultTableModel(new Object[]{"Fecha Pago","Monto"}, 0);
         tablePagos = new JTable(pagosModel);
+        UIUtils.configurarTabla(tablePagos);
         JPanel panelPagos = new JPanel(new BorderLayout());
         panelPagos.add(new JScrollPane(tablePagos), BorderLayout.CENTER);
         JPanel btnPagos = new JPanel();

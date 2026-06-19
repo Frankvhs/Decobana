@@ -27,4 +27,12 @@ public final class UIUtils {
         showError(parent, operation + ": " + ex.getMessage());
         ex.printStackTrace();
     }
+
+    // Nuevo método para desactivar arrastre de columnas y edición de celdas
+    public static void configurarTabla(JTable table) {
+        if (table.getTableHeader() != null) {
+            table.getTableHeader().setReorderingAllowed(false);
+        }
+        table.setDefaultEditor(Object.class, null);
+    }
 }

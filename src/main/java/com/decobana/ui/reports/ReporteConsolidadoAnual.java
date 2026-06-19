@@ -1,6 +1,7 @@
 package com.decobana.ui.reports;
 
 import com.decobana.db.DatabaseConnection;
+import com.decobana.ui.utils.UIUtils;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -26,7 +27,9 @@ public class ReporteConsolidadoAnual extends JDialog {
         add(top, BorderLayout.NORTH);
 
         model = new DefaultTableModel(new String[]{"Categoría","Cantidad Utilizada","Monto Facturado"}, 0);
-        add(new JScrollPane(new JTable(model)), BorderLayout.CENTER);
+        JTable table = new JTable(model);
+        UIUtils.configurarTabla(table);
+        add(new JScrollPane(table), BorderLayout.CENTER);
 
         btnVer.addActionListener(e -> cargar());
     }

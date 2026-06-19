@@ -1,6 +1,7 @@
 package com.decobana.ui.reports;
 
 import com.decobana.db.DatabaseConnection;
+import com.decobana.ui.utils.UIUtils;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -13,6 +14,8 @@ public class ReporteFichaEmpresa extends JDialog {
         setSize(600, 300);
         setLocationRelativeTo(parent);
         DefaultTableModel model = new DefaultTableModel(new String[]{"Campo","Valor"}, 0);
+        JTable table = new JTable(model);
+        UIUtils.configurarTabla(table);
         try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery("SELECT * FROM empresas LIMIT 1")) {
@@ -28,7 +31,6 @@ public class ReporteFichaEmpresa extends JDialog {
         } catch (Exception ex) {
             model.addRow(new Object[]{"Error", ex.getMessage()});
         }
-        JTable table = new JTable(model);
         add(new JScrollPane(table));
     }
 }

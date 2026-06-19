@@ -1,6 +1,7 @@
 package com.decobana.ui.reports;
 
 import com.decobana.db.DatabaseConnection;
+import com.decobana.ui.utils.UIUtils;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -30,7 +31,9 @@ public class ReporteContratosCliente extends JDialog {
         add(top, BorderLayout.NORTH);
 
         model = new DefaultTableModel(new String[]{"Cliente","Nº Contrato","Evento","Servicios","Precios","Pagos","Términos"}, 0);
-        add(new JScrollPane(new JTable(model)), BorderLayout.CENTER);
+        JTable table = new JTable(model);
+        UIUtils.configurarTabla(table);
+        add(new JScrollPane(table), BorderLayout.CENTER);
 
         btnBuscar.addActionListener(e -> buscar());
     }

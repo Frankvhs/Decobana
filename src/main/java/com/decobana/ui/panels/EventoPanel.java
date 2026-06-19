@@ -30,6 +30,7 @@ public class EventoPanel extends JPanel {
 
         eventosModel = new DefaultTableModel(new Object[]{"ID","Nombre","Tipo","Inicio","Fin","Ubicación","Invitados"}, 0);
         tableEventos = new JTable(eventosModel);
+        UIUtils.configurarTabla(tableEventos);
         tableEventos.getSelectionModel().addListSelectionListener(e -> mostrarDetalles());
         JScrollPane scrollEventos = new JScrollPane(tableEventos);
         scrollEventos.setPreferredSize(new Dimension(600, 200));
@@ -38,14 +39,17 @@ public class EventoPanel extends JPanel {
         subTabPane = new JTabbedPane();
         temasModel = new DefaultTableModel(new Object[]{"Tema"}, 0);
         tableTemas = new JTable(temasModel);
+        UIUtils.configurarTabla(tableTemas);
         subTabPane.addTab("Temas / Conceptos", new JScrollPane(tableTemas));
 
         serviciosModel = new DefaultTableModel(new Object[]{"Cód. Servicio","Cantidad"}, 0);
         tableServicios = new JTable(serviciosModel);
+        UIUtils.configurarTabla(tableServicios);
         subTabPane.addTab("Servicios", new JScrollPane(tableServicios));
 
         empleadosModel = new DefaultTableModel(new Object[]{"ID Empleado","Responsabilidades"}, 0);
         tableEmpleados = new JTable(empleadosModel);
+        UIUtils.configurarTabla(tableEmpleados);
         subTabPane.addTab("Empleados", new JScrollPane(tableEmpleados));
 
         add(subTabPane, BorderLayout.CENTER);

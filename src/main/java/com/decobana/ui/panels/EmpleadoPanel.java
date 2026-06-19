@@ -21,6 +21,7 @@ public class EmpleadoPanel extends JPanel {
         setLayout(new BorderLayout());
         tableModel = new DefaultTableModel(new Object[]{"ID","Nombre","Apellidos","Documento","Cargo","Departamento"}, 0);
         table = new JTable(tableModel);
+        UIUtils.configurarTabla(table); // Desactivar arrastre y edición
         add(new JScrollPane(table), BorderLayout.CENTER);
 
         JPanel btnPanel = new JPanel();

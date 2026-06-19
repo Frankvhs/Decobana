@@ -4,6 +4,7 @@ import com.decobana.dao.ClienteDAO;
 import com.decobana.dao.ServicioProductoDAO;
 import com.decobana.dao.EmpleadoDAO;
 import com.decobana.model.*;
+import com.decobana.ui.utils.UIUtils;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -127,6 +128,7 @@ public class EventoDialog extends JDialog {
         // Temas tab
         temasModel = new DefaultTableModel(new Object[]{"Tema / Concepto"}, 0);
         tableTemas = new JTable(temasModel);
+        UIUtils.configurarTabla(tableTemas);
         JPanel panelTemas = new JPanel(new BorderLayout());
         panelTemas.add(new JScrollPane(tableTemas), BorderLayout.CENTER);
         JPanel btnTemas = new JPanel();
@@ -154,6 +156,7 @@ public class EventoDialog extends JDialog {
         // Servicios tab
         serviciosModel = new DefaultTableModel(new Object[]{"Código Servicio","Cantidad"}, 0);
         tableServicios = new JTable(serviciosModel);
+        UIUtils.configurarTabla(tableServicios);
         JPanel panelServicios = new JPanel(new BorderLayout());
         panelServicios.add(new JScrollPane(tableServicios), BorderLayout.CENTER);
         JPanel btnServ = new JPanel();
@@ -190,6 +193,7 @@ public class EventoDialog extends JDialog {
         // Empleados tab
         empleadosModel = new DefaultTableModel(new Object[]{"ID Empleado","Responsabilidades"}, 0);
         tableEmpleados = new JTable(empleadosModel);
+        UIUtils.configurarTabla(tableEmpleados);
         JPanel panelEmpleados = new JPanel(new BorderLayout());
         panelEmpleados.add(new JScrollPane(tableEmpleados), BorderLayout.CENTER);
         JPanel btnEmp = new JPanel();

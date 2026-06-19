@@ -1,6 +1,7 @@
 package com.decobana.ui.reports;
 
 import com.decobana.db.DatabaseConnection;
+import com.decobana.ui.utils.UIUtils;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -31,6 +32,7 @@ public class ReporteEventosPeriodo extends JDialog {
 
         model = new DefaultTableModel(new String[]{"Nombre","Tipo","Inicio","Fin","Ubicación","Invitados","Temas"}, 0);
         JTable table = new JTable(model);
+        UIUtils.configurarTabla(table);
         add(new JScrollPane(table), BorderLayout.CENTER);
 
         btnBuscar.addActionListener(e -> buscar());

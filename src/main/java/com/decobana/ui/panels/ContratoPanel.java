@@ -29,6 +29,7 @@ public class ContratoPanel extends JPanel {
 
         contratosModel = new DefaultTableModel(new Object[]{"Nº Contrato","Fecha","Cliente","Evento"}, 0);
         tableContratos = new JTable(contratosModel);
+        UIUtils.configurarTabla(tableContratos);
         tableContratos.getSelectionModel().addListSelectionListener(e -> mostrarDetalles());
         JScrollPane scrollContratos = new JScrollPane(tableContratos);
         scrollContratos.setPreferredSize(new Dimension(600, 200));
@@ -37,14 +38,17 @@ public class ContratoPanel extends JPanel {
         subTabPane = new JTabbedPane();
         lineasModel = new DefaultTableModel(new Object[]{"Cód. Servicio","Cantidad","Precio Negociado"}, 0);
         tableLineas = new JTable(lineasModel);
+        UIUtils.configurarTabla(tableLineas);
         subTabPane.addTab("Líneas", new JScrollPane(tableLineas));
 
         pagosModel = new DefaultTableModel(new Object[]{"Fecha Pago","Monto"}, 0);
         tablePagos = new JTable(pagosModel);
+        UIUtils.configurarTabla(tablePagos);
         subTabPane.addTab("Pagos", new JScrollPane(tablePagos));
 
         modsModel = new DefaultTableModel(new Object[]{"Fecha","Descripción"}, 0);
         tableModificaciones = new JTable(modsModel);
+        UIUtils.configurarTabla(tableModificaciones);
         subTabPane.addTab("Modificaciones", new JScrollPane(tableModificaciones));
 
         add(subTabPane, BorderLayout.CENTER);

@@ -24,6 +24,7 @@ public class ServicioProductoPanel extends JPanel {
         setLayout(new BorderLayout());
         tableModel = new DefaultTableModel(new Object[]{"Código","Nombre","Categoría","Precio","Tercero","Activo"}, 0);
         table = new JTable(tableModel);
+        UIUtils.configurarTabla(table); // Desactivar arrastre y edición
         add(new JScrollPane(table), BorderLayout.CENTER);
 
         JPanel btnPanel = new JPanel();

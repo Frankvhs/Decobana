@@ -1,6 +1,7 @@
 package com.decobana.ui.reports;
 
 import com.decobana.db.DatabaseConnection;
+import com.decobana.ui.utils.UIUtils;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -17,6 +18,8 @@ public class ReporteEstadoProveedores extends JDialog {
                 "GROUP_CONCAT(sp.nombre || ' (' || CASE WHEN sp.estado_activo THEN 'Activo' ELSE 'Inactivo' END || ')', ', ') AS estado " +
                 "FROM proveedores p LEFT JOIN servicios_productos sp ON p.id_proveedor = sp.id_proveedor " +
                 "GROUP BY p.id_proveedor ORDER BY p.tipo_servicio, p.nombre";
+        JTable table = new JTable(model);
+        UIUtils.configurarTabla(table);
         try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
@@ -26,6 +29,6 @@ public class ReporteEstadoProveedores extends JDialog {
         } catch (Exception ex) {
             model.addRow(new Object[]{"Error", ex.getMessage(), ""});
         }
-        add(new JScrollPane(new JTable(model)));
+        add(new JScrollPane(table));
     }
 }

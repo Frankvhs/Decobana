@@ -3,6 +3,7 @@ package com.decobana.ui.reports;
 import com.decobana.dao.ClienteDAO;
 import com.decobana.model.Cliente;
 import com.decobana.db.DatabaseConnection;
+import com.decobana.ui.utils.UIUtils;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -33,6 +34,7 @@ public class ReporteFichaCliente extends JDialog {
 
         model = new DefaultTableModel(new String[]{"Campo","Valor"}, 0);
         table = new JTable(model);
+        UIUtils.configurarTabla(table);
         add(new JScrollPane(table), BorderLayout.CENTER);
 
         btnVer.addActionListener(e -> cargarFicha());

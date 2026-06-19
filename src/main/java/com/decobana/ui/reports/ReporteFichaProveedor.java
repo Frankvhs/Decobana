@@ -2,6 +2,7 @@ package com.decobana.ui.reports;
 
 import com.decobana.dao.ProveedorDAO;
 import com.decobana.model.Proveedor;
+import com.decobana.ui.utils.UIUtils;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -32,7 +33,9 @@ public class ReporteFichaProveedor extends JDialog {
         add(top, BorderLayout.NORTH);
 
         model = new DefaultTableModel(new String[]{"Campo","Valor"}, 0);
-        add(new JScrollPane(new JTable(model)), BorderLayout.CENTER);
+        JTable table = new JTable(model);
+        UIUtils.configurarTabla(table);
+        add(new JScrollPane(table), BorderLayout.CENTER);
 
         btnVer.addActionListener(e -> cargarFicha());
     }

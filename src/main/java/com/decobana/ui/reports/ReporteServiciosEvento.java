@@ -5,6 +5,7 @@ import com.decobana.dao.ServicioProductoDAO;
 import com.decobana.model.Evento;
 import com.decobana.model.EventoServicio;
 import com.decobana.model.ServicioProducto;
+import com.decobana.ui.utils.UIUtils;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -37,7 +38,9 @@ public class ReporteServiciosEvento extends JDialog {
         add(top, BorderLayout.NORTH);
 
         model = new DefaultTableModel(new String[]{"Código Servicio","Nombre Servicio","Descripción","Cantidad"}, 0);
-        add(new JScrollPane(new JTable(model)), BorderLayout.CENTER);
+        JTable table = new JTable(model);
+        UIUtils.configurarTabla(table);
+        add(new JScrollPane(table), BorderLayout.CENTER);
 
         btnVer.addActionListener(e -> cargar());
     }

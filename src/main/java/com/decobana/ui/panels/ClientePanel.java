@@ -21,6 +21,7 @@ public class ClientePanel extends JPanel {
         setLayout(new BorderLayout());
         tableModel = new DefaultTableModel(new Object[]{"ID","Nombre","Apellidos","Documento","Teléfono","Email","Trato Pref."}, 0);
         table = new JTable(tableModel);
+        UIUtils.configurarTabla(table); // Desactivar arrastre y edición
         add(new JScrollPane(table), BorderLayout.CENTER);
 
         JPanel buttonPanel = new JPanel();
