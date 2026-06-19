@@ -15,7 +15,7 @@ public class ProveedorPanel extends JPanel {
     private JTable table;
     private DefaultTableModel tableModel;
     private ProveedorDAO dao = new ProveedorDAO();
-    private JButton btnAgregar, btnEditar, btnEliminar;
+    private JButton btnAgregar, btnEditar, btnEliminar, btnRecargar;
 
     public ProveedorPanel() {
         setLayout(new BorderLayout());
@@ -27,14 +27,17 @@ public class ProveedorPanel extends JPanel {
         btnAgregar = new JButton("Agregar");
         btnEditar = new JButton("Editar");
         btnEliminar = new JButton("Eliminar");
+        btnRecargar = new JButton("Recargar");
         btnPanel.add(btnAgregar);
         btnPanel.add(btnEditar);
         btnPanel.add(btnEliminar);
+        btnPanel.add(btnRecargar);
         add(btnPanel, BorderLayout.SOUTH);
 
         btnAgregar.addActionListener(e -> agregar());
         btnEditar.addActionListener(e -> editar());
         btnEliminar.addActionListener(e -> eliminar());
+        btnRecargar.addActionListener(e -> cargarTabla());
 
         cargarTabla();
     }

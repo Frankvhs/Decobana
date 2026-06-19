@@ -18,7 +18,7 @@ public class ServicioProductoPanel extends JPanel {
     private DefaultTableModel tableModel;
     private ServicioProductoDAO dao = new ServicioProductoDAO();
     private CategoriaServicioProductoDAO catDAO = new CategoriaServicioProductoDAO();
-    private JButton btnAgregar, btnEditar, btnEliminar;
+    private JButton btnAgregar, btnEditar, btnEliminar, btnRecargar;
 
     public ServicioProductoPanel() {
         setLayout(new BorderLayout());
@@ -30,14 +30,17 @@ public class ServicioProductoPanel extends JPanel {
         btnAgregar = new JButton("Agregar");
         btnEditar = new JButton("Editar");
         btnEliminar = new JButton("Eliminar");
+        btnRecargar = new JButton("Recargar");
         btnPanel.add(btnAgregar);
         btnPanel.add(btnEditar);
         btnPanel.add(btnEliminar);
+        btnPanel.add(btnRecargar);
         add(btnPanel, BorderLayout.SOUTH);
 
         btnAgregar.addActionListener(e -> agregar());
         btnEditar.addActionListener(e -> editar());
         btnEliminar.addActionListener(e -> eliminar());
+        btnRecargar.addActionListener(e -> cargarTabla());
 
         cargarTabla();
     }

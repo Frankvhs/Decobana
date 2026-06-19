@@ -20,7 +20,7 @@ public class ContratoPanel extends JPanel {
     private DefaultTableModel lineasModel, pagosModel, modsModel;
 
     private JTabbedPane subTabPane;
-    private JButton btnAgregar, btnEditar, btnEliminar;
+    private JButton btnAgregar, btnEditar, btnEliminar, btnRecargar;
 
     private Contrato contratoSeleccionado;
 
@@ -53,14 +53,17 @@ public class ContratoPanel extends JPanel {
         btnAgregar = new JButton("Agregar");
         btnEditar = new JButton("Editar");
         btnEliminar = new JButton("Eliminar");
+        btnRecargar = new JButton("Recargar");
         btnPanel.add(btnAgregar);
         btnPanel.add(btnEditar);
         btnPanel.add(btnEliminar);
+        btnPanel.add(btnRecargar);
         add(btnPanel, BorderLayout.SOUTH);
 
         btnAgregar.addActionListener(e -> agregar());
         btnEditar.addActionListener(e -> editar());
         btnEliminar.addActionListener(e -> eliminar());
+        btnRecargar.addActionListener(e -> cargarContratos());
 
         cargarContratos();
     }

@@ -21,7 +21,7 @@ public class EventoPanel extends JPanel {
     private DefaultTableModel temasModel, serviciosModel, empleadosModel;
 
     private JTabbedPane subTabPane;
-    private JButton btnAgregar, btnEditar, btnEliminar;
+    private JButton btnAgregar, btnEditar, btnEliminar, btnRecargar;
 
     private Evento eventoSeleccionado;
 
@@ -54,14 +54,17 @@ public class EventoPanel extends JPanel {
         btnAgregar = new JButton("Agregar");
         btnEditar = new JButton("Editar");
         btnEliminar = new JButton("Eliminar");
+        btnRecargar = new JButton("Recargar");
         btnPanel.add(btnAgregar);
         btnPanel.add(btnEditar);
         btnPanel.add(btnEliminar);
+        btnPanel.add(btnRecargar);
         add(btnPanel, BorderLayout.SOUTH);
 
         btnAgregar.addActionListener(e -> agregar());
         btnEditar.addActionListener(e -> editar());
         btnEliminar.addActionListener(e -> eliminar());
+        btnRecargar.addActionListener(e -> cargarEventos());
 
         cargarEventos();
     }

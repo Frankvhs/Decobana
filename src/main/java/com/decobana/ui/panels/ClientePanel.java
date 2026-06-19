@@ -15,7 +15,7 @@ public class ClientePanel extends JPanel {
     private JTable table;
     private DefaultTableModel tableModel;
     private ClienteDAO dao = new ClienteDAO();
-    private JButton btnAgregar, btnEditar, btnEliminar;
+    private JButton btnAgregar, btnEditar, btnEliminar, btnRecargar;
 
     public ClientePanel() {
         setLayout(new BorderLayout());
@@ -27,14 +27,17 @@ public class ClientePanel extends JPanel {
         btnAgregar = new JButton("Agregar");
         btnEditar = new JButton("Editar");
         btnEliminar = new JButton("Eliminar");
+        btnRecargar = new JButton("Recargar");
         buttonPanel.add(btnAgregar);
         buttonPanel.add(btnEditar);
         buttonPanel.add(btnEliminar);
+        buttonPanel.add(btnRecargar);
         add(buttonPanel, BorderLayout.SOUTH);
 
         btnAgregar.addActionListener(e -> agregar());
         btnEditar.addActionListener(e -> editar());
         btnEliminar.addActionListener(e -> eliminar());
+        btnRecargar.addActionListener(e -> cargarTabla());
 
         cargarTabla();
     }

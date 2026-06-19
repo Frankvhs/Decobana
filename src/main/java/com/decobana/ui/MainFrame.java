@@ -43,6 +43,24 @@ public class MainFrame extends JFrame {
         tabbedPane.addTab("Eventos", eventoPanel);
         tabbedPane.addTab("Contratos", contratoPanel);
 
+        // Recargar al cambiar de pestaña
+        tabbedPane.addChangeListener(e -> {
+            Component comp = tabbedPane.getSelectedComponent();
+            if (comp instanceof ClientePanel) {
+                ((ClientePanel) comp).cargarTabla();
+            } else if (comp instanceof ProveedorPanel) {
+                ((ProveedorPanel) comp).cargarTabla();
+            } else if (comp instanceof EmpleadoPanel) {
+                ((EmpleadoPanel) comp).cargarTabla();
+            } else if (comp instanceof ServicioProductoPanel) {
+                ((ServicioProductoPanel) comp).cargarTabla();
+            } else if (comp instanceof EventoPanel) {
+                ((EventoPanel) comp).cargarEventos();
+            } else if (comp instanceof ContratoPanel) {
+                ((ContratoPanel) comp).cargarContratos();
+            }
+        });
+
         getContentPane().add(tabbedPane, BorderLayout.CENTER);
 
         // Menú Reportes
